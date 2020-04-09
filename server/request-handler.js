@@ -38,7 +38,7 @@ const requestHandler = function (request, response) {
       messages.results.push(JSON.parse(body));
       console.log(body);
     });
-    response.end();
+    response.end(JSON.stringify(messages.results[messages.results.length - 1]));
   } else if (request.method === 'GET') {
     if (request.url === '/classes/messages') {
       response.writeHead(200, headers);
