@@ -35,13 +35,18 @@ const requestHandler = function (request, response) {
       console.log(`Data chunk available: ${chunk}`);
       body.push(chunk);
       body = Buffer.concat(body).toString();
-      messages.results.push(body);
+      messages.results.push(JSON.parse(body));
       console.log(body);
     });
     response.end();
   } else if (request.method === 'GET') {
-    response.writeHead(200, headers);
-    response.end(JSON.stringify(messages));
+    if (request.url === '/classes/messages') {
+      response.writeHead(200, headers);
+      response.end(JSON.stringify(messages));
+    } else {
+      response.writeHead(404, headers);
+      response.end('404 No Such Method');
+    }
   } else {
     response.writeHead(404, headers);
     response.end('404 No Such Method');
@@ -50,7 +55,7 @@ const requestHandler = function (request, response) {
   console.log(
     'Serving request type ' + request.method + ' for url ' + request.url
   );
-  console.log(messages.results[0]);
+  console.log(messages.results);
 
   // 응답을 위한 status 코드입니다.
   const statusCode = 200;
