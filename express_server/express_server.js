@@ -1,10 +1,10 @@
 /* eslint-disable no-console */
 const express = require('express');
-const router = express.Router();
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const app = express();
-const PORT = 3002;
+const PORT = process.env.NODE_ENV === 'production' ? 3001 : 3002;
+
 const messages = {};
 messages.results = [];
 
@@ -14,12 +14,16 @@ app.listen(PORT, () => {
 
 app.use(cors());
 app.use(bodyParser.json());
-
-router.get('/classes/messages', (req, res) => {
-  res.status(200).send(JSON.stringify(messages));
+app.use((req, res, next) => {
+  console.log(req.url);
+  next();
 });
-router.post('/classes/messages', (req, res) => {
-  messages.results.push(req.body);
+
+app.get('/', (req, res) => {
   res.status(200).send(JSON.stringify(messages.results));
+});
+app.post('/', (req, res) => {
+  messages.results.push(req.body);
+  res.status(201).send(JSON.stringify(messages.results));
   console.log(req.body);
 });
