@@ -14,15 +14,11 @@ app.listen(PORT, () => {
 
 app.use(cors());
 app.use(bodyParser.json());
-app.use((req, res, next) => {
-  console.log(req.url);
-  next();
-});
 
-app.get('/', (req, res) => {
+app.get('/classes/messages', (req, res) => {
   res.status(200).send(JSON.stringify(messages.results));
 });
-app.post('/', (req, res) => {
+app.post('/classes/messages', (req, res) => {
   messages.results.push(req.body);
   res.status(201).send(JSON.stringify(messages.results));
   console.log(req.body);

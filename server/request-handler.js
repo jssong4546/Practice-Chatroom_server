@@ -28,31 +28,23 @@ const requestHandler = function (request, response) {
     response.writeHead(200, headers);
     response.end();
   }
-  if (request.method === 'POST') {
-    response.writeHead(201, headers);
-    request.on('data', (chunk) => {
-      let body = [];
-      console.log(`Data chunk available: ${chunk}`);
-      body.push(chunk);
-      body = Buffer.concat(body).toString();
-      messages.results.push(JSON.parse(body));
-      console.log(body);
-    });
-    response.on('end', () => {
-      response.writeHead(200, headers);
-      response.end(JSON.stringify(messages.results));
-    });
-  } else if (request.method === 'GET') {
-    if (request.url === '/classes/messages') {
-      response.writeHead(200, headers);
-      response.end(JSON.stringify(messages));
-    } else if (request.url === '/') {
-      response.writeHead(200, headers);
-      response.end(JSON.stringify(messages.results));
-    } else {
-      response.writeHead(404, headers);
-      response.end('404 No Such Method');
-    }
+  if (request.method === 'POST' && request.url === '/classes/messages') {
+    request
+      .on('data', (chunk) => {
+        let body = [];
+        console.log(`Data chunk available: ${chunk}`);
+        body.push(chunk);
+        body = Buffer.concat(body).toString();
+        messages.results.push(JSON.parse(body));
+        console.log(body);
+      })
+      .on('end', () => {
+        response.writeHead(201, headers);
+        response.end(JSON.stringify(messages.results));
+      });
+  } else if (request.method === 'GET' && request.url === '/classes/messages') {
+    response.writeHead(200, headers);
+    response.end(JSON.stringify(messages));
   } else {
     response.writeHead(404, headers);
     response.end('404 No Such Method');
