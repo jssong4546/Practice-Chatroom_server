@@ -38,11 +38,17 @@ const requestHandler = function (request, response) {
       messages.results.push(JSON.parse(body));
       console.log(body);
     });
-    response.end(JSON.stringify(messages.results[messages.results.length - 1]));
+    response.on('end', () => {
+      response.writeHead(200, headers);
+      response.end(JSON.stringify(messages.results));
+    });
   } else if (request.method === 'GET') {
     if (request.url === '/classes/messages') {
       response.writeHead(200, headers);
       response.end(JSON.stringify(messages));
+    } else if (request.url === '/') {
+      response.writeHead(200, headers);
+      response.end(JSON.stringify(messages.results));
     } else {
       response.writeHead(404, headers);
       response.end('404 No Such Method');
@@ -58,7 +64,7 @@ const requestHandler = function (request, response) {
   console.log(messages.results);
 
   // 응답을 위한 status 코드입니다.
-  const statusCode = 200;
+  //const statusCode = 200;
 
   // 기본 CORS 설정이 되어있는 코드 입니다. 아래에 있습니다.
   // CORS에 대해서는 조금더 알아보세요.
@@ -67,10 +73,10 @@ const requestHandler = function (request, response) {
   headers['Content-Type'] = 'text/plain';
 
   // .writeHead() 메소드는 응답 헤더에 해당 key, value 를 적어줍니다.
-  response.writeHead(statusCode, headers);
+  // response.writeHead(statusCode, headers);
 
   // 노드 서버에 대한 모든 요청은 응답이 있어야 합니다. response.end 메소드는 요청에 대한 응답을 보내줍니다.
-  response.end('Hello, World!');
+  //response.end('Hello, World!');
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
